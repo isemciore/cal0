@@ -1,0 +1,27 @@
+CC = g++
+rCC = clang++
+
+FLAGS = -std=c++11 -g -Wall -pedantic
+
+testOUT = datetest
+arrayNa = Vector
+
+main.out: datetest.cpp gregorian.h julian.h Julian.o Gregorian.o kattistime.o
+	$(CC) $(FLAGS) datetest.cpp -o main.out Julian.o Gregorian.o Date.o kattistime.o
+
+Julian.o: julian.cpp Date.o
+	$(CC) $(FLAGS) Date.o -c julian.cpp -o Julian.o
+
+Gregorian.o: gregorian.cpp Date.o
+	$(CC) $(FLAGS) -c gregorian.cpp Date.o -o Gregorian.o
+
+
+Date.o : date.cpp date.h
+	$(CC) $(FLAGS) -c date.cpp -o Date.o
+
+kattistime.o : kattistime.cpp
+	$(CC) $(FLAGS) -c kattistime.cpp -o kattistime.o
+
+clean:
+	rm -f *.o *.out && clear 
+

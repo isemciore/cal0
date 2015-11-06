@@ -1,0 +1,28 @@
+CC = g++
+rCC = clang++
+
+FLAGS = -std=c++11 -g -Wall -pedantic
+
+testOUT = basicTest
+arrayNa = Vector
+src = ../calendarAndDate/
+
+main.out: $(testOUT).cpp $(src)gregorian.h $(src)julian.h Julian.o Gregorian.o kattistime.o
+	$(CC) $(FLAGS) $(testOUT).cpp -o main.out Julian.o Gregorian.o Date.o kattistime.o
+
+Julian.o: $(src)julian.cpp Date.o
+	$(CC) $(FLAGS) Date.o -c $(src)julian.cpp -o Julian.o
+
+Gregorian.o: $(src)gregorian.cpp Date.o
+	$(CC) $(FLAGS) -c $(src)gregorian.cpp Date.o -o Gregorian.o
+
+
+Date.o : $(src)date.cpp $(src)date.h
+	$(CC) $(FLAGS) -c $(src)date.cpp -o Date.o
+
+kattistime.o : $(src)kattistime.cpp
+	$(CC) $(FLAGS) -c $(src)kattistime.cpp -o kattistime.o
+
+clean:
+	rm -f *.o *.out && clear 
+

@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.3)
+project(cal0)
+
+add_definitions(-std=c++11)
+
+set(SOURCE_FILES datetest.cpp)
+add_executable(calendar_run ${SOURCE_FILES})
+
+include_directories(calendarAndDate)
+
+add_subdirectory(calendarAndDate)
+add_subdirectory(calendar_test)
+
+target_link_libraries(calendar_run calendarAndDate)

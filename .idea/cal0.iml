@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/cal_cxxTest.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/date.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/date.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/gregorian.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/julian.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests.cpp" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/calendarAndDate" />
+          <root url="file://$MODULE_DIR$/cxxtest" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/cilk" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/objc" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/sanitizer" />
+          <root url="file:///usr/local/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/calendarAndDate" />
+          <root url="file://$MODULE_DIR$/cxxtest" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/cilk" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/objc" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/sanitizer" />
+          <root url="file:///usr/local/include" />
+        </SOURCES>
+        <excluded>
+          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/julian.cpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.cpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/date.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/date.cpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" />
+        </excluded>
+      </library>
+    </orderEntry>
+  </component>
+</module>
