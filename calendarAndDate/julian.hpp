@@ -104,7 +104,7 @@ std::string lab2::Julian::month_name() const {
         case 2 :
             return "february";
         case 3 :
-            return "mars";
+            return "march";
         case 4 :
             return "april";
         case 5 :
