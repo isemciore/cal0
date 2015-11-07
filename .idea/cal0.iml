@@ -5,11 +5,8 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/cal_cxxTest.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/date.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/date.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/gregorian.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/julian.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" isTestSource="false" />
@@ -45,11 +42,8 @@
           <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" />
           <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/julian.cpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.cpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/date.hpp" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/date.cpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" />
         </excluded>
       </library>
