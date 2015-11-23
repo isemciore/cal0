@@ -273,7 +273,7 @@ int main()
 
 
 
-    /*
+
     std::cout << "CALENDAR TESTS\n";
     Calendar<Gregorian> testCalendar;
     testCalendar.add_event("derp");
@@ -319,7 +319,7 @@ int main()
 
 
     std::cout << testCalendar <<"\n";
-    */
+
     // f�ljande ska inte g� att kompilera
 #if 0
     gg.leap_year();             // fel: kan inte komma �t protected/private medlem

@@ -13,10 +13,11 @@
 namespace lab2 {
     template<typename DateType>
     class Calendar {
+    public:
         typedef typename std::multimap<DateType,std::string>::iterator mapItType;
     private:
         DateType watchDate;
-        std::multimap<DateType,std::string> map; //Mayby create struct for more data then key with multiple values
+        std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
 
 
     public:
@@ -25,15 +26,34 @@ namespace lab2 {
 
         template <class SrcDType>
         Calendar(const Calendar<SrcDType> & src);
-        std::multimap<DateType,std::string> get_map() const {return map;}
+        std::multimap<DateType,std::string> get_map() const {return map_date_to_event_;}
         DateType getWatchDate() const{return watchDate;}
 
         bool set_date(unsigned, unsigned, unsigned);
 
         friend std::ostream& operator<<(std::ostream& os, const Calendar<DateType> & cal) {
-            typename Calendar<DateType>::mapItType startIt = cal.get_map().lower_bound(cal.getWatchDate());
-            typename Calendar<DateType>::mapItType endIt = cal.get_map().end();
-            auto dFormat = [](typename Calendar<DateType>::mapItType iterator)->std::string{//Lambda function test
+            std::multimap<DateType,std::string> map_calendar_date_event = cal.get_map();
+            /*
+            auto sI = map_calendar_date_event.begin();
+            auto sE = map_calendar_date_event.end();
+            while(sI!=sE){
+                std::cout << sI->second << "\n";
+                sI++;
+            }
+            std::cout<< "\n\n"<<map_calendar_date_event.size()<<"\n";
+            std::cout << cal.get_map().size() << "\n";
+
+            for(auto elt: map_calendar_date_event){
+                std::cout << elt.second << "\n";
+            }
+            */
+            //typename Calendar<DateType>::mapItType lower_bound = cal.get_map().lower_bound(cal.getWatchDate());
+            //typename Calendar<DateType>::mapItType endIt = cal.get_map().end();
+            typename Calendar<DateType>::mapItType lower_bound = map_calendar_date_event.lower_bound(cal.getWatchDate());
+            //typename Calendar<DateType>::mapItType lower_bound = map_calendar_date_event.begin();
+            typename Calendar<DateType>::mapItType endIt = map_calendar_date_event.end();
+
+            auto date_format_to_string = [](typename Calendar<DateType>::mapItType iterator)->std::string{//Lambda function test
                 std::string temp;
                 temp = std::to_string(iterator->first.year());
                 if(iterator->first.month() < 10){temp.append(std::to_string(0));}
@@ -45,14 +65,14 @@ namespace lab2 {
             };
             os << "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:DD2387CuCAL\n";
 
-            while(startIt != endIt){
+            while(lower_bound != endIt){
                 os<< "BEGIN:VEVENT\nUID:ezhang@kth.se\n";
-                os<<"DTSTAMP:"<<dFormat(startIt)<<"\n";
-                os<<"DTSTART:"<<dFormat(startIt)<<"\n";
-                os<<"DTEND:"<<dFormat(startIt)<<"\n";
-                os<< "SUMMARY:" << startIt->second<<"\n";
+                os<<"DTSTAMP:"<< date_format_to_string(lower_bound)<<"\n";
+                os<<"DTSTART:"<< date_format_to_string(lower_bound)<<"\n";
+                os<<"DTEND:"<< date_format_to_string(lower_bound)<<"\n";
+                os<< "SUMMARY:" << lower_bound->second<<"\n";
                 os<<"END:VEVENT\n";
-                startIt++;
+                lower_bound++;
             }
             os<<"END:VCALENDAR\n";
             return os;
@@ -89,7 +109,7 @@ namespace lab2 {
         while(fElt != lElt){
             DateType tempDate = fElt->first;
             std::string tempString = fElt->second;
-            map.insert(std::make_pair(tempDate,tempString));
+            map_date_to_event_.insert(std::make_pair(tempDate,tempString));
             fElt++;
         }
 
@@ -116,17 +136,17 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year ){
-        std::pair<mapItType, mapItType> iTpair = map.equal_range(DateType(year,month,day));
+        std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
         mapItType itStart = iTpair.first;
         mapItType itEnd = iTpair.second;
 
-        while(itStart!=itEnd){
+        while(itStart!=itEnd){ //Kollar igenom för att inte eventet redan finns
             if(itStart->second==eventName){
                 return false;
             }
             itStart++;
         }
-        map.insert(std::make_pair(DateType(year,month,day),eventName));
+        map_date_to_event_.insert(std::make_pair(DateType(year,month,day),eventName));
         return true;
     }
 
@@ -147,7 +167,7 @@ namespace lab2 {
     bool Calendar<DateType>::remove_event(std::string eventname,  unsigned day, unsigned month, unsigned year ) {
 
 
-        std::pair<mapItType, mapItType> iTpair = map.equal_range(DateType(year,month,day));
+        std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
         mapItType itStart = iTpair.first;
         mapItType itEnd = iTpair.second;
         if(itStart==itEnd){
@@ -156,7 +176,7 @@ namespace lab2 {
 
         while(itStart != itEnd){
             if(itStart->second == eventname){
-                map.erase(itStart);
+                map_date_to_event_.erase(itStart);
             }
             itStart++;
         }
@@ -194,7 +214,7 @@ namespace lab2 {
 
     template<typename DateType>
     void Calendar<DateType>::printAllEvent() {
-        for(auto elt:map){
+        for(auto elt:map_date_to_event_){
             std::cout<< elt.first << " with data " << elt.second << " \n";
         }
 

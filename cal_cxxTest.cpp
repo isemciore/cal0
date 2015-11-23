@@ -3,8 +3,13 @@
 #include "julian.hpp"
 #include "gregorian.hpp"
 #include "calendar.hpp"
+#include <assert.h>             // assert(b) ger felmeddelande om b falsk
+#include <ctime>
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
+#include <string.h>
+
 //
 using namespace lab2;
 class matrix_cxxTest : public CxxTest::TestSuite {
@@ -12,6 +17,7 @@ class matrix_cxxTest : public CxxTest::TestSuite {
     unsigned _year;
     unsigned _month;
     unsigned _day;
+
     void setUp() {
         time_t mytime;
         time(&mytime);
@@ -398,4 +404,47 @@ public:
         TS_ASSERT(jDate>=gDate);
 
     }
+
+
+    void test_calendar(){
+        Calendar<Gregorian> cal;
+        std::cout << "FÖRSTA PRINT\n\n";
+        cal.set_date(2000,12,2);
+        cal.add_event("Basketträning", 4, 12, 2000);
+        cal.add_event("Basketträning", 11, 12, 2000);
+        cal.add_event("Nyårsfrukost", 1, 1, 2001);
+        cal.add_event("Första advent", 1,12,2000); // år = 2000, månad = 12
+        cal.add_event("Vardagjämning", 20, 3); // år = 2000
+        cal.add_event("Julafton", 24, 12);
+        cal.add_event("Kalle Anka hälsar god jul", 24); // också på julafton
+        cal.add_event("Julafton", 24); // En likadan händelse samma datum ska
+// ignoreras och inte sättas in i kalendern
+        cal.add_event("Min första cykel", 20, 12, 2000);
+        cal.remove_event("Basketträning", 4);
+        std::cout << cal;
+
+        std::cout << "\nNEWLINES\n\n\n";
+
+
+        // OBS! Vårdagjämning och första advent är
+        // före nuvarande datum och skrivs inte ut
+        std::cout << "----------------------------------------" << std::endl;
+        cal.remove_event("Vårdagjämning", 20, 3, 2000);
+        cal.remove_event("Kalle Anka hälsar god jul", 24, 12, 2000);
+        cal.set_date(2000, 11, 2);
+        if (! cal.remove_event("Julafton", 24)) {
+            std::cout << " cal.remove_event(\"Julafton\", 24) tar inte"<< std::endl
+            << " bort något eftersom aktuell månad är november" << std::endl;
+        }
+        std::cout << "----------------------------------------" << std::endl;
+        std::cout << cal;
+
+
+
+        Calendar<Julian> julCal(cal);
+
+
+
+    }
+    
 };
