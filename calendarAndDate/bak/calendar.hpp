@@ -117,7 +117,6 @@ namespace lab2 {
 
     template<class DateType>
     bool Calendar<DateType>::set_date(unsigned int year, unsigned int month, unsigned int day) {
-        try{DateType(year,month,day);} catch(...){return false;}
         DateType temp(year,month,day);
         watchDate = temp;
         return true;
@@ -137,7 +136,6 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year ){
-        try{DateType(year,month,day);} catch(...){return false;}
         std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
         mapItType itStart = iTpair.first;
         mapItType itEnd = iTpair.second;
@@ -167,7 +165,7 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::remove_event(std::string eventname,  unsigned day, unsigned month, unsigned year ) {
-        try{DateType(year,month,day);} catch(...){return false;}
+
 
         std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
         mapItType itStart = iTpair.first;
@@ -179,11 +177,10 @@ namespace lab2 {
         while(itStart != itEnd){
             if(itStart->second == eventname){
                 map_date_to_event_.erase(itStart);
-                return true;
             }
             itStart++;
         }
-        return false;
+        return true;
     }
 /*
     template<typename DateType>

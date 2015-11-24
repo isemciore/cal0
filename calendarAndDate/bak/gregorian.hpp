@@ -190,11 +190,11 @@ lab2::Gregorian lab2::Gregorian::operator--(int i) {
 lab2::Gregorian::Gregorian(unsigned int year, unsigned int month, unsigned int day) {
     _year = year;
     if(month > month_this_year() || month < 1){
-        throw std::invalid_argument("");
+        throw std::invalid_argument("error in month format\n");
     }
     _month = month;
     if(day > days_this_month() || day < 1){
-        throw std::invalid_argument("");
+        throw std::invalid_argument("error in day format \n");
     }
     _day = day;
 }
