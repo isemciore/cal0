@@ -9,7 +9,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
-#include "Stripper.hpp"
+#include "mod_Stripper.hpp"
 //
 using namespace lab2;
 class matrix_cxxTest : public CxxTest::TestSuite {
@@ -422,7 +422,7 @@ public:
         cal.add_event("Min första cykel", 20, 12, 2000);
         cal.remove_event("Basketträning", 4);
 
-        Stripper<Gregorian> stripperTest;
+        mod_Stripper<Gregorian> stripperTest;
         stripperTest << cal;
 
 

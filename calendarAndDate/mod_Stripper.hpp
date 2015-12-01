@@ -11,10 +11,10 @@ using std::stringstream;
 using std::ostream;
 
 template <class T>
-class Stripper {
+class mod_Stripper {
 public:
     stringstream stripped;
-    const Stripper & operator<<(const lab2::Calendar<T> & cal) {
+    const mod_Stripper & operator<<(const lab2::Calendar<T> & cal) {
         stringstream ss;
         ss << "STRIPPER" << endl;
         ss << cal;
@@ -43,7 +43,7 @@ public:
 };
 
 template <class T>
-ostream & operator<<(ostream & os, const Stripper<T>& s)
+ostream & operator<<(ostream & os, const mod_Stripper<T>& s)
 {
     os << s.stripped.str();
     return os;

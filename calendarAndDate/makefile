@@ -45,15 +45,15 @@ youroutputs:
 	cat calendar15.09.in | ./yourprogram.out > calendar15.09.out
 
 comparewithans:
-	diff calendar15.01.out calendar15.01.ans | tee difference15.01
-	diff calendar15.02.out calendar15.02.ans | tee difference15.02
-	diff calendar15.03.out calendar15.03.ans | tee difference15.03
-	diff calendar15.04.out calendar15.04.ans | tee difference15.04
-	diff calendar15.05.out calendar15.05.ans | tee difference15.05
-	diff calendar15.06.out calendar15.06.ans | tee difference15.06
-	diff calendar15.07.out calendar15.07.ans | tee difference15.07
-	diff calendar15.08.out calendar15.08.ans | tee difference15.08
-	diff calendar15.09.out calendar15.09.ans | tee difference15.09
+	diff calendar15.01.out calendar15.01.ans | tee difference15.01.log
+	diff calendar15.02.out calendar15.02.ans | tee difference15.02.log
+	diff calendar15.03.out calendar15.03.ans | tee difference15.03.log
+	diff calendar15.04.out calendar15.04.ans | tee difference15.04.log
+	diff calendar15.05.out calendar15.05.ans | tee difference15.05.log
+	diff calendar15.06.out calendar15.06.ans | tee difference15.06.log
+	diff calendar15.07.out calendar15.07.ans | tee difference15.07.log
+	diff calendar15.08.out calendar15.08.ans | tee difference15.08.log
+	diff calendar15.09.out calendar15.09.ans | tee difference15.09.log
 
 answers_thiswilloverwritetheanswerssodontusethisone:
 	cat calendar15.01.in | ./calendar15test.out > calendar15.01.ans

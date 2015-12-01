@@ -13,20 +13,23 @@
 namespace lab2 {
     template<typename DateType>
     class Calendar {
-    public:
-        typedef typename std::multimap<DateType,std::string>::iterator mapItType;
     protected:
         class internal_date {
         private:
-            DateType date_;
+            DateType start_date_;
+            DateType end_date_;
             int hour_;
             int minute_;
+
+            int end_hour_;
+            int end_minute_;
+
         public:
-            internal_date(DateType date, int hour, int minute)
-                    : date_(date), hour_(hour), minute_(minute) { }
+            internal_date(DateType start_date, int hour, int minute, DateType end_date, int end_hour, int end_minute)
+                    : start_date_(start_date), hour_(hour), minute_(minute), end_date_(end_date), end_hour_(end_hour), end_minute_(end_minute) { }
 
             bool operator<(const internal_date &int_date) const {
-                if (date_ == int_date.date_) {
+                if (end_date_ == int_date.end_date_) {
                     if (hour_ == int_date.hour_) {
                         return minute_ < int_date.minute_;
                     }
@@ -36,9 +39,24 @@ namespace lab2 {
                         return false;
                     }
                 }
-                return (date_ < int_date.date_);
+                return (end_date_ < int_date.end_date_);
+            }
+
+            bool delta_time_exclude_date(const DateType &src_date,const int &hour,const int &min) const{
+                internal_date temp(src_date,hour,min,src_date,hour,min);
+                internal_date temp_start(start_date_,hour_,minute_,start_date_,hour_,minute_);
+                internal_date temp_end(end_date_,end_hour_,end_minute_,end_date_,end_hour_,end_minute_);
+                if (temp < temp_end&& temp_start < temp){
+                    return false;
+                }
+                return true;
             }
         };
+    public:
+        typedef typename std::multimap<DateType,std::string>::iterator mapItType;
+
+        typedef typename std::multimap<internal_date,std::string>::iterator map_date_to_event_iterator_type;
+
     private:
         DateType watchDate;
         std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
@@ -111,13 +129,18 @@ namespace lab2 {
         bool add_event(std::string eventName);
         bool add_event(std::string eventName, unsigned int day);
         bool add_event(std::string eventName, unsigned int day, unsigned int month);
-        bool add_event(std::string, unsigned day, unsigned month, unsigned year);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start, int event_length);
+
+
 
         void printAllEvent();
         bool remove_event(std::string eventname);
         bool remove_event(std::string eventname, unsigned int day);
         bool remove_event(std::string eventname, unsigned int day, unsigned int month);
         bool remove_event(std::string,unsigned,unsigned,unsigned);
+        bool remove_event(std::string, unsigned, unsigned, unsigned,int h_s, int m_s);
     };
 
     template<class DateType>
@@ -166,19 +189,46 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year ){
-        try{DateType(year,month,day);} catch(...){return false;}
-        std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
-        mapItType itStart = iTpair.first;
-        mapItType itEnd = iTpair.second;
-
-        while(itStart!=itEnd){ //Kollar igenom för att inte eventet redan finns
-            if(itStart->second==eventName){
-                return false;
-            }
-            itStart++;
+        return add_event(eventName,day,month,year,13,00);
+    }
+    template<class DateType>
+    bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start ){
+        return add_event(eventName,day,month,year,h_start,m_start, 4);
+    }
+    template<class DateType>
+    bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start, int event_length ){
+        DateType start_date;
+        DateType end_date;
+        try{start_date = DateType(year,month,day);end_date=DateType(year,month,day);} catch(...){return false;}
+        if (h_start< 0 || h_start >=24 ||m_start<0 || m_start > 60 || event_length< 0){
+            return false;
         }
-        map_date_to_event_.insert(std::make_pair(DateType(year,month,day),eventName));
-        return true;
+        int deltaMin = event_length%60;
+        int minEnd = m_start + deltaMin;
+        int deltaHour = event_length/60;
+        if (deltaMin+m_start >=60){
+            deltaHour++;
+            minEnd = minEnd%60;
+        }
+        int deltaDays = (deltaHour+h_start)%24;
+        int hour_end = (deltaHour+h_start)/24;
+        end_date += deltaDays;
+
+        internal_date temp_date(start_date,h_start,m_start,end_date,hour_end,minEnd);
+        map_date_to_event_iterator_type it_pair = map_internal_date_to_event.upper_bound(temp_date);
+        if (it_pair->first.delta_time_exclude_date(end_date,hour_end,minEnd)){
+            if (it_pair==map_internal_date_to_event.begin()){
+                it_pair--;
+                if (it_pair->first.delta_time_exclude_date(start_date,h_start,m_start)){
+                    map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
+                    return true;
+                }
+            }else{
+                map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -196,24 +246,44 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::remove_event(std::string eventname,  unsigned day, unsigned month, unsigned year ) {
-        try{DateType(year,month,day);} catch(...){return false;}
+        try { DateType(year, month, day); } catch (...) { return false; }
+        DateType start_date(year,month,day);
+        internal_date search_from_date(start_date,0,0,start_date,0,0);
+        start_date++;
+        internal_date search_to_date(start_date,0,0,start_date,0,0);
 
-        std::pair<mapItType, mapItType> iTpair = map_date_to_event_.equal_range(DateType(year,month,day));
-        mapItType itStart = iTpair.first;
-        mapItType itEnd = iTpair.second;
-        if(itStart==itEnd){
-            return false;
-        }
-
-        while(itStart != itEnd){
-            if(itStart->second == eventname){
-                map_date_to_event_.erase(itStart);
+        typename Calendar<DateType>::map_date_to_event_iterator_type start_pair = map_internal_date_to_event.upper_bound(search_from_date);
+        typename Calendar<DateType>::map_date_to_event_iterator_type end_pair = map_internal_date_to_event.upper_bound(search_to_date);
+        while(start_pair != end_pair){
+            if(start_pair->second == eventname){
+                map_internal_date_to_event.erase(start_pair);
                 return true;
             }
-            itStart++;
+            start_pair++;
         }
         return false;
     }
+    template<class DateType>
+    bool Calendar<DateType>::remove_event(std::string eventname,  unsigned day, unsigned month, unsigned year,int hour, int min) {
+        try { DateType(year, month, day); } catch (...) { return false; }
+        DateType start_date(year,month,day);
+        internal_date target_date(start_date,hour,min,start_date,hour,min);//just to find iterator to closets day as time is specified
+        //As key only hashes function of date comparision, begin date
+
+        typename Calendar<DateType>::map_date_to_event_iterator_type it_pair = map_internal_date_to_event.find(target_date);
+
+        if (it_pair == map_internal_date_to_event.end()){
+            return false;
+        }
+        if(it_pair->second == eventname){
+            map_internal_date_to_event.erase(it_pair);
+            return true;
+        }
+        return false;//as no event can occure at same time
+    }
+
+
+
 /*
     template<typename DateType>
     std::ostream& operator<<(std::ostream& os, const Calendar<DateType> & calendar){
@@ -254,3 +324,5 @@ namespace lab2 {
 
 }
 #endif //CAL0_CALENDAR_H
+
+
