@@ -15,9 +15,37 @@ namespace lab2 {
     class Calendar {
     public:
         typedef typename std::multimap<DateType,std::string>::iterator mapItType;
+    protected:
+        class internal_date {
+        private:
+            DateType date_;
+            int hour_;
+            int minute_;
+        public:
+            internal_date(DateType date, int hour, int minute)
+                    : date_(date), hour_(hour), minute_(minute) { }
+
+            bool operator<(const internal_date &int_date) const {
+                if (date_ == int_date.date_) {
+                    if (hour_ == int_date.hour_) {
+                        return minute_ < int_date.minute_;
+                    }
+                    else if (hour_ < int_date.hour_) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return (date_ < int_date.date_);
+            }
+        };
     private:
         DateType watchDate;
         std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
+
+        std::multimap<internal_date,std::string> map_internal_date_to_event;
+        std::multimap<std::string,internal_date> map_event_to_internal_date;
+
 
 
     public:
@@ -26,13 +54,14 @@ namespace lab2 {
 
         template <class SrcDType>
         Calendar(const Calendar<SrcDType> & src);
-        std::multimap<DateType,std::string> get_map() const {return map_date_to_event_;}
+        std::multimap<DateType,std::string> get_date_evemtname_map() const {return map_date_to_event_;}
         DateType getWatchDate() const{return watchDate;}
 
         bool set_date(unsigned, unsigned, unsigned);
 
+
         friend std::ostream& operator<<(std::ostream& os, const Calendar<DateType> & cal) {
-            std::multimap<DateType,std::string> map_calendar_date_event = cal.get_map();
+            std::multimap<DateType,std::string> map_calendar_date_event = cal.get_date_evemtname_map();
             /*
             auto sI = map_calendar_date_event.begin();
             auto sE = map_calendar_date_event.end();
@@ -100,7 +129,7 @@ namespace lab2 {
     template <class DateType>
     template <class SrcDType>
     Calendar<DateType>::Calendar(const Calendar<SrcDType> & src){
-        std::multimap<SrcDType,std::string> srcMap = src.get_map();
+        std::multimap<SrcDType,std::string> srcMap = src.get_date_evemtname_map();
         typedef typename std::multimap<SrcDType,std::string>::iterator targetItType;
 
         watchDate = src.getWatchDate();

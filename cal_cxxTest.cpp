@@ -9,7 +9,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <string.h>
-
+#include "Stripper.hpp"
 //
 using namespace lab2;
 class matrix_cxxTest : public CxxTest::TestSuite {
@@ -421,28 +421,9 @@ public:
 // ignoreras och inte sättas in i kalendern
         cal.add_event("Min första cykel", 20, 12, 2000);
         cal.remove_event("Basketträning", 4);
-        std::cout << cal;
 
-        std::cout << "\nNEWLINES\n\n\n";
-
-
-        // OBS! Vårdagjämning och första advent är
-        // före nuvarande datum och skrivs inte ut
-        std::cout << "----------------------------------------" << std::endl;
-        cal.remove_event("Vårdagjämning", 20, 3, 2000);
-        cal.remove_event("Kalle Anka hälsar god jul", 24, 12, 2000);
-        cal.set_date(2000, 11, 2);
-        if (! cal.remove_event("Julafton", 24)) {
-            std::cout << " cal.remove_event(\"Julafton\", 24) tar inte"<< std::endl
-            << " bort något eftersom aktuell månad är november" << std::endl;
-        }
-        std::cout << "----------------------------------------" << std::endl;
-        std::cout << cal;
-
-
-
-        Calendar<Julian> julCal(cal);
-
+        Stripper<Gregorian> stripperTest;
+        stripperTest << cal;
 
 
     }

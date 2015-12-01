@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/Stripper.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/date.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" isTestSource="false" />
@@ -22,7 +23,6 @@
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/cilk" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/objc" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/sanitizer" />
           <root url="file:///usr/local/include" />
         </CLASSES>
@@ -33,17 +33,17 @@
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/cilk" />
-          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/objc" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include/sanitizer" />
           <root url="file:///usr/local/include" />
         </SOURCES>
         <excluded>
-          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" />
-          <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/date.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.cpp" />
           <root url="file://$MODULE_DIR$/calendarAndDate/calendar.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/gregorian.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/julian.hpp" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/kattistime.h" />
+          <root url="file://$MODULE_DIR$/calendarAndDate/Stripper.hpp" />
         </excluded>
       </library>
     </orderEntry>
