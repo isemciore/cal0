@@ -99,4 +99,28 @@ public:
  void runTest() { suite_matrix_cxxTest.test_calendar(); }
 } testDescription_matrix_cxxTest_test_calendar;
 
+static class TestDescription_matrix_cxxTest_test_copy_normal : public CxxTest::RealTestDescription {
+public:
+ TestDescription_matrix_cxxTest_test_copy_normal() : CxxTest::RealTestDescription( Tests_matrix_cxxTest, suiteDescription_matrix_cxxTest, 481, "test_copy_normal" ) {}
+ void runTest() { suite_matrix_cxxTest.test_copy_normal(); }
+} testDescription_matrix_cxxTest_test_copy_normal;
+
+static class TestDescription_matrix_cxxTest_test_copy_convert : public CxxTest::RealTestDescription {
+public:
+ TestDescription_matrix_cxxTest_test_copy_convert() : CxxTest::RealTestDescription( Tests_matrix_cxxTest, suiteDescription_matrix_cxxTest, 523, "test_copy_convert" ) {}
+ void runTest() { suite_matrix_cxxTest.test_copy_convert(); }
+} testDescription_matrix_cxxTest_test_copy_convert;
+
+static class TestDescription_matrix_cxxTest_test_remove_event : public CxxTest::RealTestDescription {
+public:
+ TestDescription_matrix_cxxTest_test_remove_event() : CxxTest::RealTestDescription( Tests_matrix_cxxTest, suiteDescription_matrix_cxxTest, 564, "test_remove_event" ) {}
+ void runTest() { suite_matrix_cxxTest.test_remove_event(); }
+} testDescription_matrix_cxxTest_test_remove_event;
+
+static class TestDescription_matrix_cxxTest_test_add_conflict_time : public CxxTest::RealTestDescription {
+public:
+ TestDescription_matrix_cxxTest_test_add_conflict_time() : CxxTest::RealTestDescription( Tests_matrix_cxxTest, suiteDescription_matrix_cxxTest, 620, "test_add_conflict_time" ) {}
+ void runTest() { suite_matrix_cxxTest.test_add_conflict_time(); }
+} testDescription_matrix_cxxTest_test_add_conflict_time;
+
 #include <cxxtest/Root.cpp>

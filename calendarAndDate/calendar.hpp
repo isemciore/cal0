@@ -20,13 +20,31 @@ namespace lab2 {
             DateType end_date_;
             int hour_;
             int minute_;
-
             int end_hour_;
             int end_minute_;
 
         public:
             internal_date(DateType start_date, int hour, int minute, DateType end_date, int end_hour, int end_minute)
-                    : start_date_(start_date), hour_(hour), minute_(minute), end_date_(end_date), end_hour_(end_hour), end_minute_(end_minute) { }
+                    : start_date_(start_date), end_date_(end_date), hour_(hour), minute_(minute), end_hour_(end_hour), end_minute_(end_minute) { }
+
+            internal_date(const internal_date& src_dt)
+                : start_date_(src_dt.start_date_)
+                , end_date_(src_dt.end_date_)
+                , hour_(src_dt.hour_)
+                , minute_(src_dt.minute_)
+                , end_hour_(src_dt.end_hour_)
+                , end_minute_(src_dt.end_minute_)
+                    {
+            }
+
+            internal_date& operator=(const internal_date& src){
+                start_date_ = src.start_date_;
+                end_date_ = src.end_date_;
+                hour_ = src.hour_;
+                minute_ = src.minute_;
+                end_hour_ = src.end_hour_;
+                end_minute_ = src.end_minute_;
+            }
 
             bool operator<(const internal_date &int_date) const {
                 if (end_date_ == int_date.end_date_) {
@@ -58,18 +76,15 @@ namespace lab2 {
                 return true;
             }
         };
-    public:
-        typedef typename std::multimap<DateType,std::string>::iterator mapItType;
 
-        typedef typename std::multimap<internal_date,std::string>::iterator map_date_to_event_iterator_type;
 
     private:
         DateType watchDate;
-        //std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
         std::multimap<internal_date,std::string> map_internal_date_to_event;
 
 
     public:
+        typedef typename std::multimap<internal_date,std::string>::iterator map_date_to_event_iterator_type;
         ~Calendar();
         Calendar();
 
@@ -79,6 +94,19 @@ namespace lab2 {
         DateType getWatchDate() const{return watchDate;}
 
         bool set_date(unsigned, unsigned, unsigned);
+        bool add_event(std::string eventName);
+        bool add_event(std::string eventName, unsigned int day);
+        bool add_event(std::string eventName, unsigned int day, unsigned int month);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start);
+        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start, int event_length);
+
+        bool remove_event(std::string eventname);
+        bool remove_event(std::string eventname, unsigned int day);
+        bool remove_event(std::string eventname, unsigned int day, unsigned int month);
+        bool remove_event(std::string,unsigned,unsigned,unsigned);
+        bool remove_event(std::string, unsigned, unsigned, unsigned,int h_s, int m_s);
+
 
 
         friend std::ostream& operator<<(std::ostream& os, const Calendar<DateType> & cal) {
@@ -135,20 +163,7 @@ namespace lab2 {
         }
 
 
-        bool add_event(std::string eventName);
-        bool add_event(std::string eventName, unsigned int day);
-        bool add_event(std::string eventName, unsigned int day, unsigned int month);
-        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year);
-        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start);
-        bool add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int hour_start, int min_start, int event_length);
 
-
-
-        bool remove_event(std::string eventname);
-        bool remove_event(std::string eventname, unsigned int day);
-        bool remove_event(std::string eventname, unsigned int day, unsigned int month);
-        bool remove_event(std::string,unsigned,unsigned,unsigned);
-        bool remove_event(std::string, unsigned, unsigned, unsigned,int h_s, int m_s);
     };
 
     template<class DateType>
@@ -160,19 +175,25 @@ namespace lab2 {
     template <class DateType>
     template <class SrcDType>
     Calendar<DateType>::Calendar(const Calendar<SrcDType> & src){
-        std::multimap<SrcDType,std::string> srcMap = src.get_date_evemtname_map();
-        typedef typename std::multimap<SrcDType,std::string>::iterator targetItType;
-
+        //std::multimap<internal_date,std::string> srcMap = src.get_date_evemtname_map();
+        //std::multimap<internal_date,std::string> srcMap = src.get_date_evemtname_map();
+        auto srcMap = src.get_date_evemtname_map();
         watchDate = src.getWatchDate();
-        targetItType fElt = srcMap.begin();
-        targetItType lElt = srcMap.end();
-        /*
+        auto fElt = srcMap.begin();
+        auto lElt = srcMap.end();
+
         while(fElt != lElt){
-            DateType tempDate = fElt->first;
+            DateType start_date = fElt->first.get_start_date();
+            DateType end_date = fElt->first.get_end_type();
+            int start_hour = fElt->first.start_hour();
+            int start_min = fElt->first.start_minute();
+            int end_hour = fElt->first.end_hour();
+            int end_min = fElt->first.end_minute();
+            internal_date tempDate(start_date,start_hour,start_min,end_date,end_hour,end_min);
             std::string tempString = fElt->second;
-            map_date_to_event_.insert(std::make_pair(tempDate,tempString));
+            map_internal_date_to_event.insert(std::make_pair(tempDate,tempString));
             fElt++;
-        }*/
+        }
 
     }
 
@@ -205,31 +226,45 @@ namespace lab2 {
         return add_event(eventName,day,month,year,h_start,m_start, 4*60);
     }
     template<class DateType>
-    bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start, int event_length ){
+    bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start, int event_length ) {
         DateType start_date;
         DateType end_date;
-        try{start_date = DateType(year,month,day);end_date=DateType(year,month,day);} catch(...){return false;}
-        if (h_start< 0 || h_start >=24 ||m_start<0 || m_start > 60 || event_length< 0){
+        try {
+            start_date = DateType(year, month, day);
+            end_date = DateType(year, month, day);
+        } catch (...) { return false; }
+        if (h_start < 0 || h_start >= 24 || m_start < 0 || m_start > 60 || event_length < 0) {
             return false;
         }
-        int deltaMin = event_length%60;
+        int deltaMin = event_length % 60;
         int minEnd = m_start + deltaMin;
-        int deltaHour = event_length/60;
-        if (deltaMin+m_start >=60){
+        int deltaHour = event_length / 60;
+        if (deltaMin + m_start >= 60) {
             deltaHour++;
-            minEnd = minEnd%60;
+            minEnd = minEnd % 60;
         }
-        int deltaDays = (deltaHour+h_start)/24;
-        int hour_end = (deltaHour+h_start)%24;
+        int deltaDays = (deltaHour + h_start) / 24;
+        int hour_end = (deltaHour + h_start) % 24;
         end_date += deltaDays;
 
-        internal_date temp_date(start_date,h_start,m_start,end_date,hour_end,minEnd);
-        map_date_to_event_iterator_type it_pair = map_internal_date_to_event.upper_bound(temp_date);
+        internal_date temp_date(start_date, h_start, m_start, end_date, hour_end, minEnd);
+        internal_date end_time_comparision(end_date, hour_end, minEnd, end_date, hour_end, minEnd);
+        map_date_to_event_iterator_type it_pair = map_internal_date_to_event.lower_bound(temp_date);
+        //if (eventName == "Kalle Anka hälsar god jul") {
+        //std::cout << (end_time_comparision < it_pair->first) << "  " << (it_pair->first < end_time_comparision) << "\n";
+        //}
+        if(it_pair==map_internal_date_to_event.end() || end_time_comparision < it_pair->first){
 
-        if (it_pair==map_internal_date_to_event.end() || it_pair->first.delta_time_exclude_date(end_date,hour_end,minEnd)){
-            if (it_pair==map_internal_date_to_event.begin() || (it_pair--)->first.delta_time_exclude_date(start_date,h_start,m_start)){
+            if(it_pair == map_internal_date_to_event.begin()){
                 map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
                 return true;
+            }else {
+                it_pair--;
+                if(it_pair->first.delta_time_exclude_date(start_date,h_start,m_start)){
+                    map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
+                    return true;
+                }
+
             }
         }
         return false;

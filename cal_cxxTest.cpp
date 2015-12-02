@@ -422,8 +422,79 @@ public:
         cal.add_event("Min första cykel", 20, 12, 2000);
         mod_Stripper<Gregorian> stripperTest;
         stripperTest << cal;
+        stringstream ss;
+        ss << stripperTest;
+        std::string test_string = ss.str();
 
-        std::cout << cal << "\n";
+        //kollar att adderat rätt
+        TS_ASSERT_DIFFERS(test_string.find("0012041300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012041700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012111300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012111700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012201300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012201700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Min första cykel"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012241300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012241700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Julafton"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0101011300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0101011700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Nyårsfrukost"),std::string::npos);
+        //visar inte upp fel
+        TS_ASSERT_EQUALS(test_string.find("Vardagjämning"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Kalle Anka hälsar god jul"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Första advent"),std::string::npos);
+
+        cal.remove_event("Julafton",24);
+
+
+        mod_Stripper<Gregorian> stripper2Test;
+        stripper2Test << cal;
+        stringstream ss2;
+        ss2 << stripper2Test;
+        std::string test_string2 = ss2.str();
+        TS_ASSERT_EQUALS(test_string2.find("Julafton"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("Vardagjämning"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("Kalle Anka hälsar god jul"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("Första advent"),std::string::npos);
+
+        TS_ASSERT_DIFFERS(test_string2.find("0012041300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0012041700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0012111300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0012111700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0012201300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0012201700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("Min första cykel"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("0012241300"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("0012241700"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string2.find("Julafton"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0101011300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("0101011700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string2.find("Nyårsfrukost"),std::string::npos);
+
+    }
+
+    void test_copy_normal(){
+        Calendar<Gregorian> cal;
+        cal.set_date(2000,12,2);
+        cal.add_event("Vardagjämning", 20, 3); // år = 2000
+        cal.add_event("Första advent", 1,12,2000); // år = 2000, månad = 12
+
+        cal.add_event("Basketträning", 4, 12, 2000);
+        cal.add_event("Basketträning", 11, 12, 2000);
+        cal.add_event("Nyårsfrukost", 1, 1, 2001);
+        cal.add_event("Julafton", 24, 12);
+        cal.add_event("Kalle Anka hälsar god jul", 24); // också på julafton
+        cal.add_event("Julafton", 24);
+        cal.add_event("Min första cykel", 20, 12, 2000);
+
+        Calendar<Gregorian> cal2 = cal;
+        mod_Stripper<Gregorian> stripperTest;
+        stripperTest << cal2;
         stringstream ss;
         ss << stripperTest;
         std::string test_string = ss.str();
@@ -440,18 +511,132 @@ public:
         TS_ASSERT_DIFFERS(test_string.find("0012241300"),std::string::npos);
         TS_ASSERT_DIFFERS(test_string.find("0012241700"),std::string::npos);
         TS_ASSERT_DIFFERS(test_string.find("Julafton"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("0012241300"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("0012241700"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("Kalle Anka hälsar god jul"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("0012241300"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("0012241700"),std::string::npos);
-        TS_ASSERT_DIFFERS(test_string.find("Julafton"),std::string::npos);
         TS_ASSERT_DIFFERS(test_string.find("0101011300"),std::string::npos);
         TS_ASSERT_DIFFERS(test_string.find("0101011700"),std::string::npos);
         TS_ASSERT_DIFFERS(test_string.find("Nyårsfrukost"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Vardagjämning"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Kalle Anka hälsar god jul"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Första advent"),std::string::npos);
+
+    }
+
+    void test_copy_convert(){
+        Calendar<Gregorian> cal;
+        cal.set_date(2000,12,2);
+        cal.add_event("Vardagjämning", 20, 3); // år = 2000
+        cal.add_event("Första advent", 1,12,2000); // år = 2000, månad = 12
+
+        cal.add_event("Basketträning", 4, 12, 2000);
+        cal.add_event("Basketträning", 11, 12, 2000);
+        cal.add_event("Nyårsfrukost", 1, 1, 2001);
+        cal.add_event("Julafton", 24, 12);
+        cal.add_event("Kalle Anka hälsar god jul", 24); // också på julafton
+        cal.add_event("Julafton", 24);
+        cal.add_event("Min första cykel", 20, 12, 2000);
+
+        Calendar<Julian> cal2 = cal;
+        mod_Stripper<Julian> stripperTest;
+        stripperTest << cal2;
+        stringstream ss;
+        ss << stripperTest;
+        std::string test_string = ss.str();
+
+        TS_ASSERT_DIFFERS(test_string.find("0011211300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0011211700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0011281300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0011281700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Basketträning"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012071300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012071700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Min första cykel"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012111300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012111700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Julafton"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012191300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("0012191700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("Nyårsfrukost"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Vardagjämning"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Kalle Anka hälsar god jul"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("Första advent"),std::string::npos);
+    }
+
+    void test_remove_event(){
+        Calendar<Gregorian> cal;
+        cal.set_date(2024,5,12);
+        cal.add_event("aa");
+        cal.add_event("aa",12,5,2024,20,00,1);
+        cal.add_event("ab",13);
+        cal.add_event("ac",20,6);
+        cal.add_event("aa",3,8,2030,23,59,60*25);
+
+        mod_Stripper<Gregorian> stripperTest;
+        stripperTest << cal;
+        stringstream ss;
+        ss << stripperTest;
+        std::string test_string = ss.str();
+
+        TS_ASSERT_DIFFERS(test_string.find("2405121300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405121700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("aa"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405122000"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405122001"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("aa"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405131300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405131700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("ab"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2406201300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2406201700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("ac"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("3008032359"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("3008050059"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("aa"),std::string::npos);
+
+        cal.remove_event("aa");
+        mod_Stripper<Gregorian> stripperTest2;
+        stripperTest2 << cal;
+        stringstream ss2;
+        ss2 << stripperTest2;
+        test_string = ss2.str();
+
+        TS_ASSERT_EQUALS(test_string.find("2405121300"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("2405121700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405122000"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405122001"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("aa"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405131300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2405131700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("ab"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2406201300"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("2406201700"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("ac"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("3008032359"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("3008050059"),std::string::npos);
+        TS_ASSERT_DIFFERS(test_string.find("aa"),std::string::npos);
+
+    }
 
 
+    void test_add_conflict_time(){
+        Calendar<Gregorian> cal;
+        cal.set_date(2024,5,12);
+        cal.add_event("aa");
+        cal.add_event("aa",12,5,2024,20,00,10);
+        cal.add_event("missing",12,5,2024,20,05,1);
+        cal.add_event("ab",13);
+        cal.add_event("ac",20,6);
+        cal.add_event("aa",3,8,2030,23,59,60*25);
+        cal.add_event("miss2ing",4,8,30,1,1,1);
+        cal.add_event("miss3ing",2020,1,1,1,1,60*24*365*10);
+        mod_Stripper<Gregorian> stripperTest;
+        stripperTest << cal;
+        stringstream ss;
+        ss << stripperTest;
+        std::string test_string = ss.str();
 
+        TS_ASSERT_EQUALS(test_string.find("missing"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("miss2ing"),std::string::npos);
+        TS_ASSERT_EQUALS(test_string.find("miss3ing"),std::string::npos);
 
     }
     
