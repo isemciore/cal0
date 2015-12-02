@@ -41,6 +41,12 @@ namespace lab2 {
                 }
                 return (end_date_ < int_date.end_date_);
             }
+            DateType get_start_date()const { return start_date_;}
+            DateType get_end_type()const {return end_date_;}
+            int start_hour()const{ return hour_;}
+            int start_minute()const{ return minute_;}
+            int end_hour()const{ return end_hour_;}
+            int end_minute()const{ return end_minute_;}
 
             bool delta_time_exclude_date(const DateType &src_date,const int &hour,const int &min) const{
                 internal_date temp(src_date,hour,min,src_date,hour,min);
@@ -59,11 +65,8 @@ namespace lab2 {
 
     private:
         DateType watchDate;
-        std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
-
+        //std::multimap<DateType,std::string> map_date_to_event_; //Mayby create struct for more data then key with multiple values
         std::multimap<internal_date,std::string> map_internal_date_to_event;
-        std::multimap<std::string,internal_date> map_event_to_internal_date;
-
 
 
     public:
@@ -72,51 +75,57 @@ namespace lab2 {
 
         template <class SrcDType>
         Calendar(const Calendar<SrcDType> & src);
-        std::multimap<DateType,std::string> get_date_evemtname_map() const {return map_date_to_event_;}
+        std::multimap<internal_date,std::string> get_date_evemtname_map() const {return map_internal_date_to_event;}
         DateType getWatchDate() const{return watchDate;}
 
         bool set_date(unsigned, unsigned, unsigned);
 
 
         friend std::ostream& operator<<(std::ostream& os, const Calendar<DateType> & cal) {
-            std::multimap<DateType,std::string> map_calendar_date_event = cal.get_date_evemtname_map();
-            /*
-            auto sI = map_calendar_date_event.begin();
-            auto sE = map_calendar_date_event.end();
-            while(sI!=sE){
-                std::cout << sI->second << "\n";
-                sI++;
-            }
-            std::cout<< "\n\n"<<map_calendar_date_event.size()<<"\n";
-            std::cout << cal.get_map().size() << "\n";
+            std::multimap<internal_date,std::string> map_calendar_date_event = cal.get_date_evemtname_map();
+            DateType wtchDte = cal.getWatchDate();
+            internal_date search_from_date(wtchDte,0,0,wtchDte,0,0);
 
-            for(auto elt: map_calendar_date_event){
-                std::cout << elt.second << "\n";
-            }
-            */
-            //typename Calendar<DateType>::mapItType lower_bound = cal.get_map().lower_bound(cal.getWatchDate());
-            //typename Calendar<DateType>::mapItType endIt = cal.get_map().end();
-            typename Calendar<DateType>::mapItType lower_bound = map_calendar_date_event.lower_bound(cal.getWatchDate());
-            //typename Calendar<DateType>::mapItType lower_bound = map_calendar_date_event.begin();
-            typename Calendar<DateType>::mapItType endIt = map_calendar_date_event.end();
+            typename Calendar<DateType>::map_date_to_event_iterator_type lower_bound = map_calendar_date_event.lower_bound(search_from_date);
+            typename Calendar<DateType>::map_date_to_event_iterator_type endIt = map_calendar_date_event.end();
 
-            auto date_format_to_string = [](typename Calendar<DateType>::mapItType iterator)->std::string{//Lambda function test
+            auto date_from_format_to_string = [](typename Calendar<DateType>::map_date_to_event_iterator_type iterator,bool startDate)->std::string{//Lambda function test
                 std::string temp;
-                temp = std::to_string(iterator->first.year());
-                if(iterator->first.month() < 10){temp.append(std::to_string(0));}
-                temp.append(std::to_string(iterator->first.month()));
-                if(iterator->first.day() < 10){temp.append(std::to_string(0));};
-                temp.append(std::to_string(iterator->first.day()));
-                temp.append("T170000CET");
+                DateType date_tmp;
+                int relv_hour;
+                int relv_minute;
+                if(startDate){
+                    date_tmp = iterator->first.get_start_date();
+                    relv_hour = iterator->first.start_hour();
+                    relv_minute = iterator->first.start_minute();
+                }
+                else{
+                    date_tmp = iterator->first.get_end_type();
+                    relv_hour = iterator->first.end_hour();
+                    relv_minute = iterator->first.end_minute();
+                }
+
+
+                temp = std::to_string(date_tmp.year());
+                if(date_tmp.month() < 10){temp.append(std::to_string(0));}
+                temp.append(std::to_string(date_tmp.month()));
+                if(date_tmp.day() < 10){temp.append(std::to_string(0));};
+                temp.append(std::to_string(date_tmp.day()));
+                temp.append("T");
+                if(relv_hour<10){temp.append("0");}
+                temp.append(std::to_string(relv_hour));
+                if(relv_minute<10){temp.append("0");}
+                temp.append(std::to_string(relv_minute));
+                temp.append("CET");
                 return temp;
             };
             os << "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:DD2387CuCAL\n";
 
             while(lower_bound != endIt){
                 os<< "BEGIN:VEVENT\nUID:ezhang@kth.se\n";
-                os<<"DTSTAMP:"<< date_format_to_string(lower_bound)<<"\n";
-                os<<"DTSTART:"<< date_format_to_string(lower_bound)<<"\n";
-                os<<"DTEND:"<< date_format_to_string(lower_bound)<<"\n";
+                os << "DTSTAMP:" << date_from_format_to_string(lower_bound,true) << "\n";
+                os << "DTSTART:" << date_from_format_to_string(lower_bound,true) << "\n";
+                os << "DTEND:" << date_from_format_to_string(lower_bound,false) << "\n";
                 os<< "SUMMARY:" << lower_bound->second<<"\n";
                 os<<"END:VEVENT\n";
                 lower_bound++;
@@ -135,7 +144,6 @@ namespace lab2 {
 
 
 
-        void printAllEvent();
         bool remove_event(std::string eventname);
         bool remove_event(std::string eventname, unsigned int day);
         bool remove_event(std::string eventname, unsigned int day, unsigned int month);
@@ -158,12 +166,13 @@ namespace lab2 {
         watchDate = src.getWatchDate();
         targetItType fElt = srcMap.begin();
         targetItType lElt = srcMap.end();
+        /*
         while(fElt != lElt){
             DateType tempDate = fElt->first;
             std::string tempString = fElt->second;
             map_date_to_event_.insert(std::make_pair(tempDate,tempString));
             fElt++;
-        }
+        }*/
 
     }
 
@@ -193,7 +202,7 @@ namespace lab2 {
     }
     template<class DateType>
     bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start ){
-        return add_event(eventName,day,month,year,h_start,m_start, 4);
+        return add_event(eventName,day,month,year,h_start,m_start, 4*60);
     }
     template<class DateType>
     bool Calendar<DateType>::add_event(std::string eventName, unsigned day, unsigned month, unsigned year, int h_start, int m_start, int event_length ){
@@ -210,20 +219,15 @@ namespace lab2 {
             deltaHour++;
             minEnd = minEnd%60;
         }
-        int deltaDays = (deltaHour+h_start)%24;
-        int hour_end = (deltaHour+h_start)/24;
+        int deltaDays = (deltaHour+h_start)/24;
+        int hour_end = (deltaHour+h_start)%24;
         end_date += deltaDays;
 
         internal_date temp_date(start_date,h_start,m_start,end_date,hour_end,minEnd);
         map_date_to_event_iterator_type it_pair = map_internal_date_to_event.upper_bound(temp_date);
-        if (it_pair->first.delta_time_exclude_date(end_date,hour_end,minEnd)){
-            if (it_pair==map_internal_date_to_event.begin()){
-                it_pair--;
-                if (it_pair->first.delta_time_exclude_date(start_date,h_start,m_start)){
-                    map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
-                    return true;
-                }
-            }else{
+
+        if (it_pair==map_internal_date_to_event.end() || it_pair->first.delta_time_exclude_date(end_date,hour_end,minEnd)){
+            if (it_pair==map_internal_date_to_event.begin() || (it_pair--)->first.delta_time_exclude_date(start_date,h_start,m_start)){
                 map_internal_date_to_event.insert(std::make_pair(temp_date,eventName));
                 return true;
             }
@@ -314,13 +318,6 @@ namespace lab2 {
         return os;
     }*/
 
-    template<typename DateType>
-    void Calendar<DateType>::printAllEvent() {
-        for(auto elt:map_date_to_event_){
-            std::cout<< elt.first << " with data " << elt.second << " \n";
-        }
-
-    }
 
 }
 #endif //CAL0_CALENDAR_H
